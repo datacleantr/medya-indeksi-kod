@@ -16,6 +16,10 @@ venv/bin/streamlit run app.py
 
 Sanal ortam: Python 3.12, pandas 3.0, Streamlit 1.64, Plotly 7.1.
 
+**Veri dosyaları repoda yoktur.** Panel yerel bir Parquet arşivinden okur; arşivin yerini
+`GDELT_ARCHIVE` ortam değişkeni belirler (varsayılan: `data/archive`). Arşiv yoksa panel
+açılır ama veri gösteremez.
+
 Ek paket dosyaları ayrıdır ve `requirements.txt`'e eklenmez (yayın ortamı hafif kalsın):
 `requirements-cases.txt` (vaka araçları), `requirements-llm.txt`, `requirements-mcp.txt`.
 
