@@ -1,0 +1,22 @@
+# Gizli ayarlar — imaja ASLA girmez (Cloud Run'da kimlik servis hesabından gelir,
+# parola yalnızca SHA-256 özeti olarak ortam değişkeninde durur)
+.streamlit/secrets.toml
+.streamlit/panel_parolasi.txt
+# Veri: imaja girmez, panel bulut arşivine düşer
+data/
+dosyalar/
+# Ortam ve derleme artıkları
+venv/
+venv.old/
+__pycache__/
+*.pyc
+.git/
+.claude/
+# Panelde kullanılmayanlar
+cases/
+llm/
+ajan/
+vitrin/
+tests/
+*.md
+!yasal/*.md

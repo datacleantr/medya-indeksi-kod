@@ -1,0 +1,4 @@
+# Vaka çalışmaları (cases/) için ek paketler; panelin yayın ortamına eklenmez
+-r requirements.txt
+trafilatura==2.0.0
+requests>=2.32

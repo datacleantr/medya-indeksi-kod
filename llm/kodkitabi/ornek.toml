@@ -1,0 +1,69 @@
+# Kod kitabı İSKELETİ. Yeni konu için kopyalayın: llm/kodkitabi/<vaka>.toml
+#
+# Aynı dosyayı üç yer okur — insan kodlama ekranı (llm/kodlama.py), LLM istemi ve doğruluk ölçümü
+# (llm/olcum.py). Tanımlar burada tek yerdedir; değişirse `surum` artırılır ve etiketler hangi
+# sürümle üretildiğini saklar. **Gerçek kişi adı yazılmaz** (bu dosya repoda durur).
+#
+# Her alan için geçerli kurallar (istemde de tekrarlanır):
+# - Yalnızca başlığa (başlık yoksa adresteki metne) bakılır; haberin içeriği tahmin edilmez.
+# - Tek seçim yapılır: başlıkta en baskın olan. Emin olunamıyorsa "karar_verilemedi" işaretlenir.
+# - Tarih, site ve yayın çizgisi kodlayıcıya gösterilmez (körleme); yalnızca başlık ve dönem.
+
+surum = "ornek-v1"
+konu = "<konunun bir cümlelik tanımı; kodlayıcı ve model bunu okur>"
+
+# ---------------------------------------------------------------------------------------------
+# 1) İLGİ alanı — "bu başlık gerçekten konumuzla mı ilgili?"
+#
+# Önce bu alan kodlanır ve diğerlerini kapıya alır. Arama kalıpları her zaman yanlış eşleşme
+# getirir (mecaz kullanım, benzer adlı başka olay); bu alan onları ayıklar ve örneklemdeki
+# "odak dışı" payı (vaka.toml `odak`) bu alanın ayırt edilip edilmediğini sınar.
+#
+# OLAY MERKEZLİ konularda (bir tarihte başlayan olay) dört seçenek işe yarıyor: olayın kendisi /
+# aynı türden genel konu / aynı türden başka olay / ilgisiz. SÜREKLİ konularda (asgari ücret,
+# göçmen, enflasyon) "başka olay" karşılığı yoktur; o seçeneği çıkarın.
+[[alan]]
+ad = "ilgi"
+soru = "Başlık neyle ilgili?"
+aciklama = "Önce bu alan kodlanır. 'İlgisiz' seçilirse diğer alanlar 'Uygulanamaz' olur."
+secenekler = [
+  ["odak", "Konunun kendisi", "<asıl konu ve sonuçları; kapsama girenler burada tek tek sayılır>"],
+  ["genel", "Aynı alanda genel konu", "<konuya değen ama odak olmayan genel tartışma>"],
+  ["baska", "Aynı türden başka olay", "<olay merkezli konularda: benzer ama farklı olay. Sürekli konuda bu seçeneği silin>"],
+  ["ilgisiz", "İlgisiz", "<arama kelimesi mecaz anlamda ya da yanlış eşleşme>"],
+]
+
+# ---------------------------------------------------------------------------------------------
+# 2) ÇERÇEVE alanı — "başlık okura neyi ön plana çıkarıyor?"
+#
+# ⚠️ EN ÇOK HATA BURADA ÇIKIYOR. 24.10.2026 ölçümünde iki bağımsız model (yerel qwen3.8 ve
+# Haiku 5.5) deprem kod kitabında bu alanda %55–65 bandında tıkandı ve İKİSİ DE aynı seçeneğe
+# saplandı ("barınma"): tanımı fazla geniş olduğu için komşu çerçeveleri yutuyordu. Birbirinden
+# bağımsız iki modelin aynı hatayı yapması modeli değil TANIMI işaret eder.
+#
+# Bu yüzden yazarken:
+# - Seçenekleri karşılıklı dışlayıcı tutun; iki seçenek aynı başlığa uyuyorsa tanımları keskinleştirin.
+# - "Yeniden inşa / altyapı / süreç" gibi geniş kaplar koymayın, ya da bölün.
+# - 6–8 seçeneği geçmeyin. Uzun liste uyumu düşürür.
+# - Taslağı YAZDIKTAN SONRA ölçün: `venv/bin/python -m llm.olcum <vaka> qwen3.8` — yerelde bedava,
+#   bir tur ~3 dk. Rapordaki "seçenek bazlı" tablosunda büyük artı fark = o seçeneğe saplanma.
+[[alan]]
+ad = "cerceve"
+soru = "Başlığın baskın çerçevesi ne?"
+aciklama = "Başlığın okura neyi ön plana çıkardığı. Birden fazla varsa ilk okuyuşta en baskın olanı seçin."
+secenekler = [
+  ["<anahtar1>", "<Kısa başlık>", "<hangi başlıklar buraya girer; sınırı komşu seçenekten ayıracak kadar net yazın>"],
+  ["<anahtar2>", "<Kısa başlık>", "<...>"],
+  ["diger", "Diğer", "Yukarıdakilerden hiçbirine uymuyor."],
+  ["uygulanamaz", "Uygulanamaz", "İlgi alanı konunun dışında."],
+]
+
+# ---------------------------------------------------------------------------------------------
+# 3) İsteğe bağlı alanlar.
+#
+# Alan eklemek ölçümü otomatik zorlaştırır: her alan kendi uyum oranını taşır ve seçenek sayısı
+# arttıkça uyum düşer. Önce iki alanla ölçüp eşiği tutturun, sonra ekleyin.
+#
+# Deprem kod kitabında "sorumluluk" (kime yükleniyor) ve "tutum" (devletin müdahalesine bakış)
+# vardı; ikisi de ağırlıkla "atıf yok"/"konu dışı" çıktığı için llm/olcum.py varsayılanında
+# ölçülmüyor (--alan ile açıkça istenir). Örnek biçim için llm/kodkitabi/deprem.toml'a bakın.

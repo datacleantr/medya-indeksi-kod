@@ -1,0 +1,69 @@
+# Kod kitabı: 6 Şubat 2023 depremleri — haber başlığı etiketleme (LLM pilotu)
+#
+# Aynı kod kitabı hem insan kodlayıcı (llm/kodlama.py) hem LLM istemi için kullanılır; tanımlar değişirse
+# `surum` artırılır ve etiketler hangi sürümle üretildiğini saklar. Gerçek kişi adı içermez.
+#
+# Kurallar (her alan için):
+# - Yalnızca başlığa (başlık yoksa adresteki metne) bakılır; haberin içeriği tahmin edilmez.
+# - Tek seçim yapılır: başlıkta en baskın olan. Emin olunamıyorsa "karar_verilemedi" işaretlenir.
+# - Tarih, site ve yayın çizgisi bilgisi kodlayıcıya gösterilmez (körleme); yalnızca başlık ve dönem.
+
+surum = "deprem-v1"
+konu = "6 Şubat 2023 Kahramanmaraş merkezli depremler ve etkileri"
+
+[[alan]]
+ad = "ilgi"
+soru = "Başlık neyle ilgili?"
+aciklama = "Önce bu alan kodlanır. 'İlgisiz' ya da 'Başka deprem' seçilirse diğer alanlar 'Uygulanamaz' olur."
+secenekler = [
+  ["6subat", "6 Şubat depremleri ve sonuçları", "Deprem anı, arama-kurtarma, yardım, barınma, yeniden yapım, davalar, anma; deprem bölgesindeki (11 il) artçılar dahil."],
+  ["risk", "Genel deprem riski ve hazırlık", "İstanbul veya başka bir bölge için olası deprem, fay hatları, bina güçlendirme, deprem sigortası; 6 Şubat'a atıf olsa bile odak gelecekteki risk."],
+  ["baska", "Başka bir deprem", "Deprem bölgesi dışındaki veya başka ülkedeki yeni bir sarsıntı."],
+  ["ilgisiz", "İlgisiz", "'Deprem' kelimesi mecaz anlamda ('siyasette deprem', 'transfer depremi') ya da yanlış eşleşme."],
+]
+
+[[alan]]
+ad = "cerceve"
+soru = "Başlığın baskın çerçevesi ne?"
+aciklama = "Başlığın okura neyi ön plana çıkardığı. Birden fazla varsa ilk okuyuşta en baskın olanı seçin."
+secenekler = [
+  ["kurtarma", "Arama-kurtarma ve can kaybı", "Enkaz, kurtarılanlar, kayıp ve yaralı sayıları, tahliye."],
+  ["yardim", "Yardım ve dayanışma", "Bağış, yardım kampanyası, gönüllüler, yardım kuruluşlarının faaliyeti, uluslararası yardım."],
+  ["barinma", "Barınma ve yeniden yapım", "Çadır, konteyner kent, kalıcı konut, hak sahipliği, altyapı ve kentin yeniden inşası."],
+  ["sorumluluk", "Sorumluluk ve hesap sorma", "Müteahhit, yapı denetimi, imar affı, ihmal, gözaltı, dava, bilirkişi; 'kim sorumlu' sorusu."],
+  ["siyaset", "Siyaset ve polemik", "Partiler arası tartışma, seçim, siyasetçilerin birbirini suçlaması, siyasi ziyaretin kendisi."],
+  ["ekonomi", "Ekonomi ve maliyet", "Hasarın maliyeti, bütçe, vergi, kredi, istihdam, bölge ekonomisi, sigorta."],
+  ["saglik", "Sağlık ve psikoloji", "Yaralıların tedavisi, salgın riski, travma, psikososyal destek, engellilik."],
+  ["hafiza", "Hafıza ve anma", "Yıl dönümü, anma töreni, kayıpları hatırlama, 'unutmadık' söylemi, tanıklıklar."],
+  ["bilim", "Bilim ve uzman görüşü", "Fay hattı, artçı açıklamaları, uzman ve akademisyen değerlendirmesi, deprem büyüklüğü."],
+  ["diger", "Diğer", "Yukarıdakilerden hiçbirine uymuyor (ör. magazin, spor, eğitim takvimi)."],
+  ["uygulanamaz", "Uygulanamaz", "İlgi alanı 'Başka deprem' veya 'İlgisiz'."],
+]
+
+[[alan]]
+ad = "sorumluluk"
+soru = "Başlık, yıkım veya aksaklıklar için sorumluluğu kime yüklüyor?"
+aciklama = "Açık ya da güçlü bir ima varsa kodlanır. Salt bilgi veren başlıklar 'Atıf yok'."
+secenekler = [
+  ["yok", "Atıf yok", "Başlıkta sorumluluk atfı yok (bilgi, rakam, yardım haberi vb.)."],
+  ["doga", "Doğa / kader", "Afetin büyüklüğü, 'asrın felaketi', kaçınılmazlık vurgusu."],
+  ["muteahhit", "Müteahhit ve yapı sahipleri", "Binayı yapan, kolon kesen, malzemeden çalan kişi veya firmalar."],
+  ["denetim", "Denetim ve yerel yönetimler", "Yapı denetim firmaları, belediyeler, imar izinleri, yerel yöneticiler."],
+  ["merkezi", "Merkezi yönetim", "Hükümet, bakanlıklar, imar affı politikası, afet müdahalesinin koordinasyonu."],
+  ["kurumlar", "Afet ve yardım kurumları", "AFAD, Kızılay veya başka kurumların performansı."],
+  ["siyasi_rakip", "Siyasi rakipler", "Bir parti veya siyasetçinin sorumluluğu rakibine yüklemesi."],
+  ["coklu", "Birden fazla / belirsiz", "Sorumluluk birden fazla aktöre yayılıyor ya da kime yüklendiği net değil."],
+  ["uygulanamaz", "Uygulanamaz", "İlgi alanı 'Başka deprem' veya 'İlgisiz'."],
+]
+
+[[alan]]
+ad = "tutum"
+soru = "Başlığın devletin ve yetkililerin depreme müdahalesine tutumu ne?"
+aciklama = "Yalnızca devlet / yetkili müdahalesi (kurtarma, yardım koordinasyonu, barınma, yeniden yapım) konu ediliyorsa. Başlığın genel duygusu değil, müdahaleye bakışı."
+secenekler = [
+  ["olumlu", "Olumlu / destekleyici", "Başarı, hız, 'söz verdik yaptık', teslim edilen konut vurgusu."],
+  ["notr", "Nötr / bilgi", "Müdahaleyi değerlendirmeden aktarıyor (açıklama, rakam, takvim)."],
+  ["elestirel", "Eleştirel", "Gecikme, yetersizlik, koordinasyon eksikliği, verilen sözlerin tutulmaması vurgusu."],
+  ["konu_disi", "Müdahale konu edilmiyor", "Başlıkta devlet veya yetkili müdahalesi yok."],
+  ["uygulanamaz", "Uygulanamaz", "İlgi alanı 'Başka deprem' veya 'İlgisiz'."],
+]

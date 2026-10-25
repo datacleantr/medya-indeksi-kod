@@ -1,0 +1,34 @@
+# Sanal ortam
+venv/
+venv.old/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Kimlik bilgileri — ASLA repoya girmez
+.streamlit/secrets.toml
+.streamlit/panel_parolasi.txt
+*.json.key
+*.pem
+
+# Veri dosyaları (BigQuery çıktıları, yerel Parquet arşivi, vaka depoları)
+*.csv
+*.parquet
+data/
+
+# Vaka dosyaları: gerçek kişi adları içeren haber başlıkları ve çıktılar
+dosyalar/
+
+# Üretilen çıktılar
+vitrin/site/
+
+# Yerel plan, rapor ve not dosyaları
+*_PLANI.md
+*_fizibilite.md
+*_incelemesi.md
+*-inceleme*.md
+NOTLAR.md
+
+# Araç ayarları
+.claude/
+.agents/

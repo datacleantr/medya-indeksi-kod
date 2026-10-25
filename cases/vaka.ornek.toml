@@ -1,0 +1,40 @@
+# Vaka yapılandırması örneği. Kopyalayın: dosyalar/<vaka_adi>/vaka.toml
+# Gerçek kişi adları yalnızca dosyalar/ altındaki kopyada yazılır; bu örnek repoda durduğu için yer adı kullanır.
+
+ad = "Iğdır vakası"                 # raporlarda görünen ad
+baslangic = "2015-02-18"            # arşivde taranacak aralık
+bitis = "2026-09-27"
+
+# Arşivdeki ön süzgeç (RE2; URL + başlık + kişi alanı + tüm adlar üzerinde). Geniş tutun, gürültü sonra ayıklanır.
+on_suzgec = "(?i)igdir|i&#x11f;d&#x131;r|iğdır"
+
+# Korpusa giriş: aksansız küçük harfe çevrilmiş "başlık + URL + kişi alanı" üzerinde Python regex
+dahil = "\\bigdir"
+haric = "igdir(spor|fk)"            # isteğe bağlı: benzer adlı başka kişi/kurum/takım
+
+# Odak kalıbı (isteğe bağlı, aksansız regex): olay merkezli konularda olayın imzası. llm/ornek.py bunu
+# taşımayan başlıkları "odak dışı" sayıp örneklemin %15'ine bilerek karıştırır; kod kitabının "ilgi"
+# sorusu böyle sınanır. Sürekli konularda (asgari ücret, göçmen) boş bırakın: "odak dışı"nın doğal bir
+# tanımı yoktur, kota uygulanmaz.
+# odak = "igdir olayi|olay yeri|durusma"
+
+# Dönemler: [etiket, başlangıç]; her dönem bir sonrakinin başlangıcına kadar sürer
+donemler = [
+  ["olay öncesi", "2015-02-18"],
+  ["olay ve ilk hafta", "2026-08-29"],
+  ["sonrası", "2026-09-06"],
+]
+
+# Çerçeveler: ad = aksansız regex (başlık + URL üzerinde). Oranlar alt sınırdır.
+[cerceveler]
+"Deprem / afet" = "deprem|sel|afet"
+"Güvenlik" = "operasyon|gozalti|tutukla"
+"Siyaset" = "\\bchp|\\bakp|\\bmhp|belediye|vali"
+
+# Metni çekilecek ek konular (her biri için en erken 6 farklı sitenin haberi): ad = aksansız regex
+[metin_konulari]
+"Resmî açıklama" = "bakan|valilik|aciklama"
+
+# Metin özetinde cümle seçmek için kalıp (Python regex, büyük/küçük harf duyarsız)
+[ozet]
+kalip = "iddia|ifade|gozalti|tutuklan|rapor|kamera"

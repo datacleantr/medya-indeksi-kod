@@ -1,0 +1,76 @@
+# Başlıklardan kişi ve kurum adı çıkarma kuralları (pipeline/entities.py).
+# Sözlük GDELT başlıklarından kurulur; bu dosya yalnızca genel kuralları tutar, belirli kişi adı içermez.
+# Değişiklikten sonra: venv/bin/python pipeline/entities.py sozluk && venv/bin/python pipeline/entities.py isle --full
+
+# Kişi: başlıkta bu ön adlardan biriyle başlayan 2–3 büyük harfli kelime ("Ön Ad Soyad", "Ön Ad Ön Ad Soyad").
+# Aynı zamanda sıradan kelime olan ön adlar (Umut, Barış, Deniz...) cümle başında yanlış eşleşmesin diye, küçük
+# harfle de sık geçenlerde ilk iki kelimenin küçük harfli ikili olarak nadir geçmesi, her adda da son kelimenin
+# sıradan bir kelime olmaması aranır (entities.py: AMBIGUOUS_*, LAST_LOWER_MAX_RATIO).
+on_adlar = [
+  # erkek
+  "Abdullah", "Abdulkadir", "Abdurrahman", "Adem", "Adnan", "Ahmet", "Akif", "Alaattin", "Ali", "Alp", "Alparslan",
+  "Altan", "Arda", "Arif", "Aslan", "Atilla", "Avni", "Aydın", "Ayhan", "Aykut", "Bahadır", "Baki", "Barış", "Batuhan",
+  "Bayram", "Bekir", "Berat", "Berk", "Bilal", "Binali", "Bora", "Bülent", "Burak", "Burhan", "Can", "Celal", "Cem",
+  "Cemal", "Cengiz", "Cevdet", "Cihan", "Coşkun", "Cüneyt", "Çağatay", "Çağlar", "Doğan", "Doğu", "Durmuş", "Ekrem",
+  "Emin", "Emrah", "Emre", "Ender", "Engin", "Enis", "Enver", "Erdal", "Erdem", "Ergün", "Erhan", "Erkan",
+  "Ersin", "Ertan", "Ertuğrul", "Ercan", "Eren", "Ferhat", "Fatih", "Faruk", "Fethi", "Fikri", "Fuat", "Furkan",
+  "Gökhan", "Gürsel", "Hakan", "Hakkı", "Halil", "Haluk", "Hamdi", "Hamza", "Hasan", "Haşim", "Hayati", "Hikmet",
+  "Hilmi", "Hulusi", "Hüseyin", "Hüsnü", "İbrahim", "İhsan", "İlhan", "İlker", "İlyas", "İsa", "İsmail", "İsmet",
+  "İzzet", "Kadir", "Kamil", "Kazım", "Kemal", "Kenan", "Kerem", "Koray", "Kubilay", "Kudret", "Kürşat", "Levent",
+  "Lütfi", "Mahir", "Mahmut", "Mansur", "Mazlum", "Mehmet", "Melih", "Mert", "Mesut", "Metin", "Mevlüt", "Muammer",
+  "Muharrem", "Muhammed", "Muhammet", "Muhsin", "Murat", "Musa", "Mustafa", "Muzaffer", "Necati", "Necdet",
+  "Necmettin", "Nedim", "Nevzat", "Nihat", "Nuri", "Numan", "Nurettin", "Oğuz", "Oğuzhan", "Okan", "Oktay", "Onur",
+  "Orhan", "Osman", "Ozan", "Ömer", "Önder", "Özcan", "Özgür", "Özkan", "Rafet", "Ramazan", "Rasim", "Recep", "Reşat",
+  "Rıza", "Rıdvan", "Sabri", "Sadettin", "Sadık", "Salih", "Sami", "Sedat", "Selahattin", "Selami", "Selim", "Selçuk",
+  "Semih", "Serdar", "Serhat", "Serkan", "Sezai", "Sinan", "Suat", "Süleyman", "Şahin", "Şamil", "Şenol", "Şevket",
+  "Şükrü", "Talat", "Tamer", "Taner", "Tanju", "Tarık", "Tayfun", "Tayyip", "Tuncay", "Tuncer", "Turgay", "Turgut",
+  "Tolga", "Ufuk", "Uğur", "Ümit", "Veli", "Vedat", "Volkan", "Yahya", "Yakup", "Yasin", "Yavuz", "Yaşar", "Yıldırım",
+  "Yılmaz", "Yunus", "Yusuf", "Zafer", "Zekai", "Zeki", "Ziya",
+  # kadın
+  "Açelya", "Ahu", "Aslı", "Ayça", "Aylin", "Ayşe", "Ayşegül", "Aysel", "Aysun", "Başak", "Berna", "Betül", "Burcu",
+  "Büşra", "Canan", "Cansu", "Ceren", "Demet", "Derya", "Didem", "Dilek", "Ebru", "Ece", "Elif", "Emine", "Esra",
+  "Fadime", "Fatma", "Feride", "Filiz", "Gamze", "Gizem", "Gökçe", "Gül", "Gülay", "Gülşen", "Gülten", "Hacer",
+  "Hande", "Hatice", "Hülya", "İpek", "Kübra", "Leyla", "Melek", "Melike", "Meral", "Merve", "Meltem", "Nazlı",
+  "Nermin", "Nesrin", "Nihal", "Nilüfer", "Nur", "Nuray", "Özlem", "Pınar", "Rabia", "Saadet", "Selin", "Selma",
+  "Serap", "Sevda", "Sevgi", "Sevil", "Sibel", "Songül", "Şebnem", "Şule", "Tuğba", "Tülay", "Yasemin", "Yeliz",
+  "Zehra", "Zeynep", "Zuhal",
+  # Türkçe haberlerde sık geçen yabancı ön adlar
+  "Abdel", "Ahmad", "Benjamin", "Boris", "Donald", "Emmanuel", "Friedrich", "Giorgia", "Joe",
+  "Kamala", "Keir", "Kim", "Marco", "Mohammed", "Muhammad", "Nicolas", "Olaf", "Sergey", "Ursula",
+  "Viktor", "Vladimir", "Volodimir", "Xi",
+]
+
+# Ön addan sonra gelse de soyadı sayılmayan kelimeler (ön ad aynı zamanda yer veya yön adı olabilir: "Doğu Akdeniz").
+soyad_olmayan = [
+  "Akdeniz", "Karadeniz", "Anadolu", "Avrupa", "Asya", "Afrika", "Amerika", "Türkistan", "Kudüs", "Blok", "Bloku",
+  "Hattı", "Yakası", "Cephesi", "Sınırı", "Bölgesi", "Kanalı", "Köyü", "Mahallesi", "Caddesi", "Sokağı", "Parkı",
+  "Camii", "Köprüsü", "Barajı", "Gölü", "Dağı", "Adası", "Limanı", "Havalimanı", "Stadyumu", "Bey", "Hanım", "Hoca",
+  "Hocası", "Paşa", "Efendi", "Usta", "Abi", "Abla", "Amca", "Teyze", "Dede", "Nine", "Baba", "Anne", "Kardeş",
+  "Türkiye", "Türk", "Cumhuriyeti", "Pınarı", "Harekatı", "Harekâtı", "Operasyonu", "Karagümrük", "Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor",
+  "Bayramı", "Antlaşması", "Anlaşması", "Kupası", "Günü", "Ödülü", "Haftası", "Ayı", "Yılı", "Kandili", "Camisi", "Başkan", "Başkanı", "Bakan", "Bakanı", "Vali", "Valisi", "Haberleri", "Haber",
+]
+
+# Kurum: büyük harfli 1–4 kelimeden sonra bu kelimelerden biriyle biten ad ("Ticaret Bakanlığı", "AK Parti").
+kurum_ekleri = [
+  "Ajansı", "Akademisi", "Bakanlığı", "Bankası", "Başkanlığı", "Belediyesi", "Birliği", "Borsası", "Derneği",
+  "Dairesi", "Enstitüsü", "Federasyonu", "Gazetesi", "Genelkurmayı", "Hastanesi", "Holding", "Holdingi",
+  "Komisyonu", "Konfederasyonu", "Konseyi", "Kulübü", "Kurulu", "Kurumu", "Mahkemesi", "Meclisi", "Merkezi",
+  "Müdürlüğü", "Müsteşarlığı", "Odası", "Ofisi", "Örgütü", "Parti", "Partisi", "Platformu", "Sendikası",
+  "Savcılığı", "Teşkilatı", "Üniversitesi", "Vakfı", "Valiliği", "Kaymakamlığı", "Cephesi", "Hareketi",
+]
+
+# Kısaltma (3–6 büyük harf) kurum sayılır; bunlar sayılmaz (yer, birim, başlık kalıbı, sınav, anlamı belirsiz).
+kisaltma_disi = [
+  "ABD", "KKTC", "BAE", "TL", "USD", "EUR", "SON", "DAKİKA", "YENİ", "CANLI", "VİDEO", "FOTO", "ÖZEL", "FLAŞ",
+  "İŞTE", "HABER", "GÜNDEM", "SPOR", "EKONOMİ", "TV", "US", "UK", "THE", "AND", "FOR", "NEW", "OCAK", "ŞUBAT", "MART",
+  "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK", "YKS", "LGS", "KPSS", "ALES",
+  "TYT", "AYT", "DGS", "YDS", "TUS", "ÖTV", "KDV", "SGK'LI", "TIR", "İHA", "SİHA", "TİHA", "DOA", "KM", "KG", "CM",
+  "MM", "GB", "MB", "HD", "PC", "AI", "VIP", "MAÇ", "GOL", "BAŞKAN", "BAKAN", "TÜRKİYE", "İSTANBUL", "ANKARA",
+  "İZMİR", "DHA", "AA", "HDP'Lİ", "COVID", "CEO", "ASYA", "MUĞLA", "KAAN", "TROY", "ZAHA", "KOVİD", "AVM", "EYT", "LTD", "ŞTİ", "ÜFE", "TÜFE", "GSYH", "LGBT",
+]
+# Hem ön ad hem sık soyadı olan kelimeler: yalnızca adın ilk kelimesi olabilir, ikinci ad olarak zincire eklenmez
+# ("Ön Ad Soyad" + sonraki kelime "Ön Ad Soyad X" olmasın).
+yalniz_ilk_ad = ["Yıldırım", "Yılmaz", "Aydın", "Aslan", "Doğan", "Kaya", "Şahin", "Özkan", "Ersin", "Eren"]
+
+# 2 harfli kısaltmalar adreste çok belirsizdir; yalnızca bunlar alınır.
+kisaltma_iki_harf = ["AB", "BM"]

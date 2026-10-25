@@ -1,0 +1,100 @@
+# GDELT'in taramadığı veya taramayı bıraktığı yayınlar için ek toplama (pipeline/extra_collect.py).
+# Yalnızca künye toplanır: adres, başlık, tarih. Tam metin toplanmaz. robots.txt'ye uyulur; site başına
+# saniyede en fazla bir istek gider. Panelin kapsam denetimi hangi yayınların eksik olduğunu gösterir
+# (KEY_OUTLETS); buraya eklenen yayın `site` alanıyla oradaki alan adına bağlanır.
+#
+# Alanlar:
+#   ad              görünen ad
+#   site            SourceCommonName karşılığı (www'siz alan adı; KEY_OUTLETS'teki ile aynı)
+#   guncel          son haberleri veren RSS veya haber site haritaları (her gün çalıştırılır)
+#   arsiv_dizini    geçmiş site haritalarının dizini (isteğe bağlı)
+#   arsiv_kalip     dizindeki alt haritaları seçen regex. İki grup varsa (yıl, ay) harita o aya aittir ve
+#                   tarih hassasiyeti "ay"dır (lastmod ay içindeyse "gün"). Grup yoksa tarih lastmod'dan
+#                   veya url_tarih'ten alınır (WordPress türü; tüm alt haritalar okunur).
+#   url_tarih       adresten tarih çıkaran regex (yıl, ay, gün grupları; isteğe bağlı)
+#
+# Toplanamayanlar (29.09.2026 yoklaması): Mezopotamya Ajansı (robots.txt tüm toplamayı yasaklıyor),
+# İHA (RSS/site haritası yok), Bold Medya ve Özgür Gündem (TLS sertifika hatası).
+
+[[yayin]]
+ad = "Cumhuriyet"
+site = "cumhuriyet.com.tr"
+guncel = ["https://www.cumhuriyet.com.tr/sitemaps/news.xml", "https://www.cumhuriyet.com.tr/rss"]
+arsiv_dizini = "https://www.cumhuriyet.com.tr/sitemaps/posts.xml"
+arsiv_kalip = "posts-(\\d{4})-(\\d{1,2})\\.xml"
+
+[[yayin]]
+ad = "Ulusal Kanal"
+site = "ulusal.com.tr"
+guncel = ["https://www.ulusal.com.tr/sitemap-latest.xml", "https://www.ulusal.com.tr/rss"]
+arsiv_dizini = "https://www.ulusal.com.tr/sitemap.xml"
+arsiv_kalip = "sitemaps/(\\d{4})-(\\d{1,2})\\.xml"
+
+[[yayin]]
+ad = "Aydınlık"
+site = "aydinlik.com.tr"
+guncel = ["https://www.aydinlik.com.tr/sitemap-news.xml", "https://www.aydinlik.com.tr/rss"]
+arsiv_dizini = "https://www.aydinlik.com.tr/sitemap/index"
+arsiv_kalip = "sitemap/(\\d{4})/(\\d{1,2})$"
+
+[[yayin]]
+ad = "Tele1"
+site = "tele1.com.tr"
+guncel = ["https://www.tele1.com.tr/sitemap-news.xml", "https://www.tele1.com.tr/rss"]
+arsiv_dizini = "https://www.tele1.com.tr/sitemap.xml"
+arsiv_kalip = "sitemap-(\\d{4})-(\\d{2})\\.xml"
+
+[[yayin]]
+ad = "Diken"
+site = "diken.com.tr"
+guncel = ["https://www.diken.com.tr/news-sitemap.xml", "https://www.diken.com.tr/rss.xml"]
+arsiv_dizini = "https://www.diken.com.tr/sitemap.xml"
+arsiv_kalip = "post-sitemap\\d*\\.xml"
+
+[[yayin]]
+ad = "Medyascope"
+site = "medyascope.tv"
+guncel = ["https://medyascope.tv/news-sitemap.xml", "https://medyascope.tv/feed"]
+arsiv_dizini = "https://medyascope.tv/sitemap_index.xml"
+arsiv_kalip = "post-sitemap\\d*\\.xml"
+url_tarih = "medyascope\\.tv/(\\d{4})/(\\d{2})/(\\d{2})/"
+
+[[yayin]]
+ad = "Halk TV"
+site = "halktv.com.tr"
+guncel = ["https://halktv.com.tr/export/newsmap", "https://halktv.com.tr/rss"]
+
+[[yayin]]
+ad = "Gazete Duvar"
+site = "gazeteduvar.com.tr"
+guncel = ["https://www.gazeteduvar.com.tr/export/newsmap", "https://www.gazeteduvar.com.tr/export/rss"]
+
+[[yayin]]
+ad = "Nefes"
+site = "nefes.com.tr"
+guncel = ["https://www.nefes.com.tr/export/newsmap", "https://www.nefes.com.tr/export/rss"]
+
+[[yayin]]
+ad = "Yeniçağ"
+site = "yenicaggazetesi.com"
+guncel = ["https://www.yenicaggazetesi.com/export/newsmap", "https://www.yenicaggazetesi.com/rss"]
+
+[[yayin]]
+ad = "Karar"
+site = "karar.com"
+guncel = ["https://www.karar.com/rss"]
+
+[[yayin]]
+ad = "Kısa Dalga"
+site = "kisadalga.net"
+guncel = ["https://kisadalga.net/rss"]
+
+[[yayin]]
+ad = "Serbestiyet"
+site = "serbestiyet.com"
+guncel = ["https://serbestiyet.com/rss"]
+
+[[yayin]]
+ad = "TR724"
+site = "tr724.com"
+guncel = ["https://www.tr724.com/feed"]

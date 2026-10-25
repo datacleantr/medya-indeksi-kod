@@ -1,0 +1,2 @@
+# LLM pilotu (llm/) için yerel paketler. Yayındaki panele (requirements.txt) eklenmez.
+anthropic==1.9.0
