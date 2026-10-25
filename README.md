@@ -8,17 +8,35 @@ Belirli bir kişi ya da konuyla ilgili haberleri BigQuery'den (veya yerel Parque
 
 ## Çalıştırma
 
+**Python 3.12 veya üstü gerekir.** Önce sürümü denetleyin:
+
 ```bash
-python3.12 -m venv venv
-venv/bin/pip install -r requirements.txt
+python3 --version        # 3.12 veya üstü olmalı
+```
+
+macOS'ta `/usr/bin/python3` hâlâ 3.9 olabilir. Çıkan sürüm 3.12'den düşükse 3.12+ bir
+yorumlayıcı kurun (`brew install python@3.13`) ve sanal ortamı onunla kurun — aksi halde
+`pip install` yanıltıcı bir hata verir: *"Could not find a version that satisfies the
+requirement streamlit==1.64.0"*. Bu, pin'in bozuk olduğu anlamına **gelmez**; Python sürümünün
+o paketler için eski olduğu anlamına gelir.
+
+```bash
+python3 -m venv venv                        # veya: python3.13 -m venv venv
+venv/bin/pip install -r requirements.txt    # ~60 paket
 venv/bin/streamlit run app.py
 ```
 
-Sanal ortam: Python 3.12, pandas 3.0, Streamlit 1.64, Plotly 7.1.
+Paketler Python 3.12.8 ve 3.13.7 ile kurulup çalıştırılarak denendi.
 
-**Veri dosyaları repoda yoktur.** Panel yerel bir Parquet arşivinden okur; arşivin yerini
-`GDELT_ARCHIVE` ortam değişkeni belirler (varsayılan: `data/archive`). Arşiv yoksa panel
-açılır ama veri gösteremez.
+Sanal ortam: pandas 3.0, Streamlit 1.64, Plotly 7.1, DuckDB 1.5.
+
+**Veri olmadan ne görürsünüz:** panel açılır ve hata vermez, ama veri kaynağı olarak yalnızca
+"Bulut arşivi" (BigQuery erişimi gerekir) ve "Dosya yükle (CSV)" çıkar. **CSV yükleme yolu
+kimlik bilgisi ve arşiv olmadan çalışır**; arayüzü ve analizleri denemek için en hızlısıdır.
+Yerel Parquet arşivi varsa "Yerel arşiv" seçeneği de listeye eklenir ve varsayılan olur.
+
+**Veri dosyaları repoda yoktur.** Yerel Parquet arşivinin yerini `GDELT_ARCHIVE` ortam
+değişkeni belirler (varsayılan: `data/archive`).
 
 Ek paket dosyaları ayrıdır ve `requirements.txt`'e eklenmez (yayın ortamı hafif kalsın):
 `requirements-cases.txt` (vaka araçları), `requirements-llm.txt`, `requirements-mcp.txt`.
