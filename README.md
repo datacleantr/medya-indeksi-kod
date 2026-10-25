@@ -189,15 +189,3 @@ Cloud Run'a dağıtır. İmaja yalnızca panelin ihtiyacı olanlar girer (`app.p
 - Parolalı giriş `parola_kapisi()` ile yapılır. Parolanın kendisi hiçbir yerde saklanmaz;
   yalnızca SHA-256 özeti `PANEL_PAROLA_OZETI` ortam değişkenindedir. Karşılaştırma
   `hmac.compare_digest` ile sabit zamanlıdır. Kapı **veri okunmadan öncedir.**
-
-## Repoda olmayanlar
-
-| Ne | Neden |
-|---|---|
-| `data/` — yerel Parquet arşivi, vaka depoları | Boyut; `pipeline/export.py` ile indirilir |
-| `dosyalar/` — vaka dosyaları ve çıktıları | **Gerçek kişi adları içeren haber başlıkları** |
-| `.streamlit/secrets.toml` | Kimlik bilgileri |
-| Plan ve rapor dosyaları | Yerelde kalır |
-
-`dosyalar/` dizini kişisel veri içerdiği için repoya hiç girmez. Vaka yapılandırması biçimi
-için `cases/vaka.ornek.toml`'a bakın; gerçek adlar yalnızca o dosyanın yerel kopyasında yazılır.
